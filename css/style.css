@@ -552,6 +552,13 @@
 		.fa-stack-1x{line-height:inherit}
 		.fa-stack-2x{font-size:2em}
 		.fa-inverse{color:#fff}
+		.fa-child:before {
+  content: "\f1ae";
+}.fa-paper-plane:before {
+  content: "\f1d8";
+}.fa-paper-plane-o:before {
+  content: "\f1d9";
+}
 		.fa-glass:before{content:"\f000"}
 		.fa-music:before{content:"\f001"}
 		.fa-search:before{content:"\f002"}
