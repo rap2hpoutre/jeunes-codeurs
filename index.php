@@ -1,3 +1,46 @@
+<?php
+if (isset($_POST['name'])) {
+		function clean_field($text) {
+				$text = htmlspecialchars(trim($text), ENT_QUOTES);
+				if (1 === get_magic_quotes_gpc()) {
+					$text = stripslashes($text);
+				}
+				$text = nl2br($text);
+				return $text;
+		}
+
+		$msg_success = array();
+		$msg_errors = array();
+		if ($_POST['name'] == '') array_push($msg_errors, "Vous n'avez pas saisi de nom.");
+		if ($_POST['email'] == '') array_push($msg_errors, "Vous n'avez pas saisi d'adresse email.");
+		else if (filter_var($_POST['email'], FILTER_VALIDATE_EMAIL) === false) array_push($msg_errors, "Vous n'avez pas saisi une adresse email valide.");
+		if ($_POST['message'] == '') array_push($msg_errors, "Vous n'avez pas saisi de message.");
+		
+		if (count($msg_errors) == 0) {
+				$clean_name = clean_field($_POST['name']);
+				$clean_email = clean_field($_POST['email']);
+				$clean_message = clean_field($_POST['message']);
+		
+				$email_from = 'noreply@jeunescodeurs.com';
+				$email_to = 'jeunes.codeurs@gmail.com';
+				$email_subject = "Nouveau message de la part de ".$clean_name." !";
+				$email_message = "
+E-mail : " . $clean_email . "
+
+Message :
+" . $clean_message;
+				
+				$email_headers  = 'MIME-Version: 1.0' . "\r\n";
+				$email_headers .= 'From:Jeunes Codeurs Home <'.$email_from.'>' . "\r\n" .
+							'Reply-To:'.$email_from. "\r\n" .
+							'X-Mailer:PHP/'.phpversion();
+				
+				if (mail($email_to, $email_subject, $email_message, $email_headers)) array_push($msg_success, "Votre message a été envoyé avec succès.");
+				else array_push($msg_errors, "Il y a eu un problème lors de l'envoi de l'e-mail.");
+		}
+}
+?>
+
 <!DOCTYPE HTML>
 <!--
 	Strongly Typed 1.1 by HTML5 UP
@@ -115,26 +158,47 @@
 						<header>
 							<h2>Des questions ? <strong>Contactez-nous !</strong></h2>
 						</header>
+						
+						<?php if (isset($msg_errors) && count($msg_errors) > 0) { ?>
+						<div class="12u message-errors">
+								<ul>
+										<?php foreach ($msg_errors as $msg_single) { echo '<li>' . $msg_single . '</li>'; } ?>
+								</ul>
+						</div>
+						<?php 
+						}
+						
+						if (isset($msg_success) && count($msg_success) > 0) { 
+						?>
+						<div class="12u message-success">
+								<ul>
+										<?php foreach ($msg_success as $msg_single) { echo '<li>' . $msg_single . '</li>'; } ?>
+								</ul>
+						</div>
+						<?php 
+						}
+						?>
+						
 						<div class="row">
 							<div class="6u">
 								<section>
-									<form method="post" action="#">
+									<form method="post" action="<?php echo $_SERVER['PHP_SELF']; ?>#footer-wrapper">
 										<div class="row half">
 											<div class="6u">
-												<input name="name" placeholder="Nom" type="text" class="text" />
+												<input name="name" placeholder="Nom" type="text" class="text" value="<?php if (!empty($_POST['name']) && count($msg_errors) > 0) echo $_POST['name']; ?>" />
 											</div>
 											<div class="6u">
-												<input name="email" placeholder="Email" type="text" class="text" />
+												<input name="email" placeholder="Email" type="text" class="text" value="<?php if (!empty($_POST['email']) && count($msg_errors) > 0) echo $_POST['email']; ?>" />
 											</div>
 										</div>
 										<div class="row half">
 											<div class="12u">
-												<textarea name="message" placeholder="Message"></textarea>
+												<textarea name="message" placeholder="Message"><?php if (!empty($_POST['message']) && count($msg_errors) > 0) echo $_POST['message']; ?></textarea>
 											</div>
 										</div>
 										<div class="row half">
 											<div class="12u">
-												<a href="#" class="button button-icon fa fa-envelope">Envoyer</a>
+												<input type="submit" class="button button-icon fa fa-envelope" value="Envoyer" />
 											</div>
 										</div>
 									</form>

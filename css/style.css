@@ -1238,3 +1238,19 @@
 		border-top: solid 2px #e5e5e5;
 		text-align: center;
 	}
+	
+/*********************************************************************************/
+/* Messages                                                                     */
+/*********************************************************************************/
+	.message-errors, .message-success
+	{
+		text-align: center;
+	}
+		.message-errors
+		{
+			color: #FF0000;
+		}
+			.message-success
+			{
+				color: #5B894E;
+			}
